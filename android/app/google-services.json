@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "527336230091",
+    "project_id": "samsung-store-app",
+    "storage_bucket": "samsung-store-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527336230091:android:5bc5686f7153ee20c7df4e",
+        "android_client_info": {
+          "package_name": "com.example.samsung_store"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXWJHq8bxVfsFh_tXVMppdE2w882FyxOU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
