@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class AdminFormScreen extends StatefulWidget {
   // Jika docId null = Tambah Produk Baru. Jika ada = Edit Produk.
   final String? docId; 
@@ -23,7 +24,8 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
   String _selectedCategory = 'Smartphone';
   bool _isRecommended = false;
 
-  final List<String> _categories = ['Smartphone', 'Laptop', 'Tablet', 'Watch'];
+  //final List<String> _categories = ['Smartphone', 'Laptop', 'Tablet', 'Watch'];
+  final List<String> _categories = ['Smartphone', 'Tablet', 'Watch', 'Laptop', ];
 
   @override
   void initState() {
@@ -89,6 +91,13 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
       appBar: AppBar(
         title: Text(widget.docId == null ? "Tambah Produk" : "Edit Produk"),
       ),
+
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue[900],
+        child: const Icon(Icons.add, color: Colors.white),
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminFormScreen())),
+      ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(

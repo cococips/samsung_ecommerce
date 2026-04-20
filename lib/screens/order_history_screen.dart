@@ -214,21 +214,37 @@ class OrderHistoryScreen extends StatelessWidget {
                     ),
                     
                     // --- TOMBOL INTERAKTIF: PESANAN DITERIMA ---
-                    if (status != 'Selesai') ...[
-                      const SizedBox(height: 15),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.green,
-                            side: const BorderSide(color: Colors.green),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          ),
-                          onPressed: () => _tampilkanDialogUlasan(context, order['docId'], firstItemName),
-                          child: const Text("Pesanan Diterima", style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                    ]
+if (status == 'Dikirim') ...[
+  const SizedBox(height: 15),
+  SizedBox(
+    width: double.infinity,
+    child: OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.green,
+        side: const BorderSide(color: Colors.green),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+      onPressed: () => _tampilkanDialogUlasan(context, order['docId'], firstItemName),
+      child: const Text("Pesanan Diterima", style: TextStyle(fontWeight: FontWeight.bold)),
+    ),
+  ),
+] else if (status == 'Sedang Diproses' || status == 'Diproses' || status == 'Sedang Packing') ...[
+  const SizedBox(height: 15),
+  Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    decoration: BoxDecoration(
+      color: Colors.grey[200],
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: const Text(
+      "Menunggu pengiriman dari toko",
+      textAlign: TextAlign.center,
+      style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+    ),
+  ),
+]
+// Jika status == 'Selesai', tidak perlu menampilkan tombol apa-apa karena sudah selesai.
                   ],
                 ),
               );

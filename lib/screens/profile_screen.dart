@@ -8,19 +8,23 @@ import 'login_screen.dart';
 import 'order_history_screen.dart'; 
 import 'address_screen.dart';
 import 'admin_dashboard_screen.dart';
+import 'admin_order_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 1. AMBIL DATA USER
     final user = FirebaseAuth.instance.currentUser;
     final userEmail = user?.email ?? "Email tidak ditemukan";
-    final bool isAdmin = userEmail == "admin@samsung.com";
+    
+    // 2. LOGIKA ADMIN SUPER KETAT (Abaikan huruf besar/kecil & spasi)
+    final bool isAdmin = userEmail.trim().toLowerCase() == "admin@samsung.com";
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F2F5), // Warna background abu-abu khas aplikasi premium
-      appBar: AppBar(title: const Text("Profil Saya"), backgroundColor: Colors.white, elevation: 0),
+      backgroundColor: const Color(0xFFF0F2F5),
+      appBar: AppBar(title: const Text("Profil Saya", style: TextStyle(color: Colors.black)), backgroundColor: Colors.white, elevation: 0),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -42,8 +46,11 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(height: 10),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(20)),
-                          child: Text("Gold Tier", style: TextStyle(color: Colors.blue[900], fontSize: 12, fontWeight: FontWeight.bold)),
+                          decoration: BoxDecoration(color: isAdmin ? Colors.red[50] : Colors.blue[50], borderRadius: BorderRadius.circular(20)),
+                          child: Text(
+                            isAdmin ? "Super Admin" : "Gold Tier", 
+                            style: TextStyle(color: isAdmin ? Colors.red[900] : Colors.blue[900], fontSize: 12, fontWeight: FontWeight.bold)
+                          ),
                         )
                       ],
                     ),
@@ -53,12 +60,10 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
 
-            // --- MENU DASHBOARD (DENGAN LAYOUT MODERN MENGAMBANG) ---
+            // --- MENU CUSTOMER (SEMUA ORANG BISA LIHAT) ---
             _buildMenuGroup([
               _buildMenuItem(Icons.shopping_bag_outlined, "Pesanan Saya", true, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderHistoryScreen()))),
               _buildMenuItem(Icons.location_on_outlined, "Daftar Alamat", true, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddressScreen()))),
-              
-              // FITUR YANG KINI BISA DI-KLIK!
               _buildMenuItem(Icons.payment_outlined, "Metode Pembayaran", false, () {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Fitur Dompet / Pembayaran akan segera hadir!")));
               }),
@@ -67,15 +72,13 @@ class ProfileScreen extends StatelessWidget {
             _buildMenuGroup([
               SwitchListTile(
                 secondary: const Icon(Icons.dark_mode_outlined),
-                title: const Text("Mode Gelap (Dark Mode)", style: TextStyle(fontWeight: FontWeight.w500)),
+                title: const Text("Mode Gelap", style: TextStyle(fontWeight: FontWeight.w500)),
                 value: context.watch<ThemeProvider>().isDarkMode,
                 activeThumbColor: Colors.blue[900],
                 onChanged: (value) => context.read<ThemeProvider>().toggleTheme(value),
               ),
               const Divider(height: 1, indent: 60),
               _buildMenuItem(Icons.help_outline, "Pusat Bantuan", true, () => _hubungiCS(context)),
-              
-              // FITUR TENTANG APLIKASI (POPUP INFO)
               _buildMenuItem(Icons.info_outline, "Tentang Aplikasi", false, () {
                 showAboutDialog(
                   context: context,
@@ -87,17 +90,27 @@ class ProfileScreen extends StatelessWidget {
               }),
             ]),    
 
+            // --- MENU KHUSUS ADMIN (GEMBOK AKTIF) ---
             if (isAdmin) 
               _buildMenuGroup([
                 ListTile(
-                  leading: const Icon(Icons.security, color: Colors.blue),
-                  title: const Text("Panel Admin (CRUD)", style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: const Text("Kelola Produk & Database"),
+                  leading: const Icon(Icons.admin_panel_settings_outlined, color: Colors.red),
+                  title: const Text("Panel Admin (Produk)", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                  subtitle: const Text("Kelola Produk & Kategori"),
                   trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboardScreen())),
                 ),
+                const Divider(height: 1, indent: 60),
+                ListTile(
+                  leading: const Icon(Icons.local_shipping_outlined, color: Colors.orange),
+                  title: const Text("Pesanan Masuk", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange)),
+                  subtitle: const Text("Update Status Pengiriman Pembeli"),
+                  trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminOrderScreen())),
+                ),
               ]),
 
+            // --- MENU KELUAR ---
             _buildMenuGroup([
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.red),
@@ -112,14 +125,13 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // WIDGET BANTUAN UNTUK LAYOUT MENU MODERN (MENGAMBANG DENGAN ROUNDED CORNER)
   Widget _buildMenuGroup(List<Widget> children) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Memberikan jarak dari tepi layar
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15), // Melengkungkan sudut
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))], // Bayangan tipis
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
